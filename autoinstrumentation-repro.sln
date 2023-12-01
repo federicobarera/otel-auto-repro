@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34322.80
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dependencies", "Dependencies\Dependencies.csproj", "{080D5A28-2E56-45FE-89B3-9E7F47A3EB25}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "autoinstrumentation-repro", "Web\autoinstrumentation-repro.csproj", "{33688130-C483-486B-A769-19BB763595F8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{080D5A28-2E56-45FE-89B3-9E7F47A3EB25}.Debug|x64.ActiveCfg = Debug|x64
+		{080D5A28-2E56-45FE-89B3-9E7F47A3EB25}.Debug|x64.Build.0 = Debug|x64
+		{080D5A28-2E56-45FE-89B3-9E7F47A3EB25}.Release|x64.ActiveCfg = Release|x64
+		{080D5A28-2E56-45FE-89B3-9E7F47A3EB25}.Release|x64.Build.0 = Release|x64
+		{33688130-C483-486B-A769-19BB763595F8}.Debug|x64.ActiveCfg = Debug|x64
+		{33688130-C483-486B-A769-19BB763595F8}.Debug|x64.Build.0 = Debug|x64
+		{33688130-C483-486B-A769-19BB763595F8}.Release|x64.ActiveCfg = Release|x64
+		{33688130-C483-486B-A769-19BB763595F8}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9E36EEFD-1A47-49D5-9E43-3757D587FAAE}
+	EndGlobalSection
+EndGlobal

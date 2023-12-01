@@ -1,0 +1,103 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: main
+  namespace: opentelemetry
+spec:
+  mode: deployment
+  config: |
+    exporters:
+      logging: null
+      prometheus:
+        enable_open_metrics: true
+        endpoint: 0.0.0.0:9464
+        resource_to_telemetry_conversion:
+          enabled: true
+    processors:
+      batch:
+        send_batch_size: 10000
+        timeout: 10s
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+      resource:
+        attributes:
+        - action: upsert
+          key: deployment.environment
+          value: 'test'
+      transform:
+        metric_statements:
+        - context: metric
+          statements:
+          - set(description, "Measures the duration of inbound HTTP requests") where name
+            == "http.server.duration"
+    receivers:
+      otlp:
+        protocols:
+          grpc: null
+          http: null
+      prometheus:
+        config:
+          scrape_configs:
+          - job_name: opentelemetry-collector
+            scrape_interval: 10s
+            static_configs:
+            - targets:
+              - ${env:MY_POD_IP}:8888
+    service:
+      pipelines:
+        traces:
+          exporters:
+          - logging
+          processors:
+          - memory_limiter
+          - resource
+          - batch
+          receivers:
+          - otlp
+      telemetry:
+        metrics:
+          address: ${env:MY_POD_IP}:8888
+  env:
+    - name: MY_POD_IP
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.podIP
+  podAnnotations:
+    prometheus.io/port: "9464"
+    prometheus.io/scrape: "true"
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 128Mi
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: auto-instrumentation
+  namespace: opentelemetry
+spec:
+  exporter:
+    endpoint: http://main-collector.opentelemetry:4318
+  propagators:
+    - tracecontext
+    - baggage
+  sampler:
+    type: parentbased_traceidratio
+    argument: "1"
+  dotnet:
+    env:
+      - name: OTEL_DOTNET_AUTO_TRACES_GRPCNETCLIENT_INSTRUMENTATION_ENABLED
+        value: "false"
+      - name: OTEL_DOTNET_AUTO_LOGS_INSTRUMENTATION_ENABLED
+        value: "true"
+      - name: OTEL_DOTNET_AUTO_TRACES_ADDITIONAL_SOURCES
+        value: "Azure.*"
+      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        value: delta
